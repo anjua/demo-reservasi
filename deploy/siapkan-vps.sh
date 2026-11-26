@@ -17,8 +17,19 @@ fi
 
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
-apt-get install -y git unzip curl nginx sqlite3 certbot python3-certbot-nginx \
-  php8.3-fpm php8.3-cli php8.3-sqlite3 php8.3-mbstring php8.3-xml php8.3-curl php8.3-zip php8.3-bcmath php8.3-intl
+PAKET="git unzip curl nginx sqlite3 certbot python3-certbot-nginx \
+  php8.3-fpm php8.3-cli php8.3-sqlite3 php8.3-mbstring php8.3-xml php8.3-curl php8.3-zip php8.3-bcmath php8.3-intl"
+
+# Beberapa VPS tidak punya IPv6. Konfigurasi bawaan Nginx mendengarkan [::]:80,
+# sehingga Nginx gagal start dan apt berhenti dengan error. Hapus baris IPv6 itu
+# lalu selesaikan instalasinya.
+if ! apt-get install -y $PAKET; then
+  if [ -f /etc/nginx/sites-available/default ]; then
+    sed -i '/listen \[::\]/d' /etc/nginx/sites-available/default
+  fi
+  dpkg --configure -a
+  apt-get install -y $PAKET
+fi
 
 # Composer
 if ! command -v composer >/dev/null; then
@@ -39,7 +50,8 @@ if command -v ufw >/dev/null; then
 fi
 
 rm -f /etc/nginx/sites-enabled/default
-systemctl reload nginx
+systemctl enable nginx >/dev/null 2>&1 || true
+systemctl restart nginx
 
 echo
 echo "VPS siap. Lanjutkan dengan:"
