@@ -29,10 +29,8 @@ fi
 echo "==> Mengambil kode ke $DIR"
 if [ -d "$DIR/.git" ]; then
   git -C "$DIR" pull --ff-only
-  BARU=0
 else
   git clone "$REPO" "$DIR"
-  BARU=1
 fi
 cd "$DIR"
 
@@ -72,6 +70,10 @@ while IFS= read -r line || [ -n "$line" ]; do
 done < "$PRESET_FILE"
 
 echo "==> Database"
+# Isi data contoh kalau database belum ada atau masih kosong (mis. pemasangan
+# sebelumnya gagal di tengah jalan). Kalau sudah berisi, cukup migrate.
+BARU=0
+[ -s database/database.sqlite ] || BARU=1
 touch database/database.sqlite
 php artisan config:clear
 if [ "$BARU" = 1 ]; then
