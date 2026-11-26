@@ -142,11 +142,19 @@ tests/Feature/BookingTest.php                 # pengujian alur utama
 php artisan test
 ```
 
-## Deploy singkat (shared hosting / VPS)
+## Demo online (salon, klinik, bengkel)
+
+Panduan lengkap memasang 3 versi demo di satu VPS ada di **[docs/DEPLOY.md](docs/DEPLOY.md)**. Ringkasnya:
+
+- `deploy/presets/*.env` berisi identitas usaha untuk tiap versi. `BRAND_BUSINESS_TYPE` (salon/klinik/bengkel) juga menentukan layanan contoh, jarak slot, dan kapasitas yang diisi seeder.
+- `deploy/siapkan-vps.sh` menyiapkan VPS Ubuntu (sekali saja), lalu `deploy/pasang-demo.sh` memasang atau memperbarui satu versi demo lengkap dengan Nginx, SSL, dan cron.
+- `DEMO_MODE=true` menampilkan banner demo dan akun demo di halaman login. Data juga direset ke data contoh setiap pukul 02.00 (`php artisan demo:reset`).
+
+## Deploy singkat untuk klien (shared hosting / VPS)
 
 1. Upload kode, jalankan `composer install --no-dev --optimize-autoloader` dan `npm ci && npm run build`.
 2. Atur `.env` produksi (`APP_ENV=production`, `APP_DEBUG=false`, `APP_URL`, database, dan variabel `BRAND_*`).
-3. `php artisan key:generate`, `php artisan migrate --force`, lalu buat akun admin (seeder atau tinker).
+3. `php artisan key:generate`, `php artisan migrate --force`, lalu buat akun admin (seeder atau tinker). Untuk klien sungguhan, biarkan `DEMO_MODE=false` dan ganti kata sandi admin.
 4. `php artisan config:cache && php artisan route:cache && php artisan view:cache`.
 5. Arahkan document root web server ke folder `public/`.
 
