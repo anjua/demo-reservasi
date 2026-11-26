@@ -32,7 +32,7 @@ const submit = () => form.post('/admin/login', { onFinish: () => form.reset('pas
                     <input v-model="form.remember" type="checkbox" class="rounded border-slate-300 text-brand" /> Ingat saya
                 </label>
                 <button class="btn-primary w-full" :disabled="form.processing">Masuk</button>
-                <p class="rounded-lg bg-amber-50 p-3 text-xs text-amber-800">
+                <p v-if="$page.props.demo" class="rounded-lg bg-amber-50 p-3 text-xs text-amber-800">
                     Akun demo: <b>admin@demo.test</b> / <b>password</b>
                 </p>
             </form>

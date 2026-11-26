@@ -65,6 +65,11 @@ return [
     |
     */
 
+    /*
+    | Mode demo: tampilkan akun demo di halaman login dan reset data tiap malam.
+    */
+    'demo_mode' => (bool) env('DEMO_MODE', false),
+
     'timezone' => env('APP_TIMEZONE', 'Asia/Jakarta'),
 
     /*

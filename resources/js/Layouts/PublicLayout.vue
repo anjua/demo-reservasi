@@ -12,6 +12,10 @@ const fullTitle = computed(() => (props.title ? `${props.title} · ${brand.value
 <template>
     <Head :title="fullTitle" />
     <div class="flex min-h-screen flex-col">
+        <div v-if="$page.props.demo" class="bg-slate-900 px-4 py-2 text-center text-xs text-white">
+            Ini versi demo. Silakan coba booking; data direset setiap malam.
+            <a href="/admin" class="ml-1 font-semibold underline">Coba dashboard admin →</a>
+        </div>
         <header class="sticky top-0 z-30 border-b border-slate-200 bg-white/90 backdrop-blur">
             <div class="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-3">
                 <Link href="/"><BrandLogo /></Link>
