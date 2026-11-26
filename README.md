@@ -1,58 +1,160 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Demo Sistem Reservasi Online (Laravel + Vue)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplikasi booking/reservasi online untuk UMKM jasa: **salon, klinik, barbershop, bengkel, laundry, studio foto**, dan sejenisnya. Pelanggan memilih layanan, tanggal, dan jam yang masih kosong, lalu booking dari HP. Pemilik usaha mengelola semuanya dari dashboard admin.
 
-## About Laravel
+Dibangun dengan **Laravel 13 + Inertia.js + Vue 3 + Tailwind CSS 4**. Tampilan berbahasa Indonesia, mobile-friendly, dan mudah di-rebrand untuk klien yang berbeda hanya lewat file `.env`.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Fitur
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+**Halaman pelanggan**
+- Pilih layanan (nama, deskripsi, durasi, harga)
+- Pilih tanggal; hari tutup dan tanggal libur otomatis tidak bisa dipilih
+- Pilih jam dari slot yang **benar-benar tersedia** (memperhitungkan durasi layanan, kapasitas, dan booking lain)
+- Isi data diri (nama, nomor WhatsApp, email opsional, catatan)
+- Halaman bukti booking dengan kode unik + tombol **kirim ke WhatsApp** usaha
+- Menu **Cek Booking** untuk melihat status dengan kode + nomor WA
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+**Dashboard admin** (`/admin`)
+- Ringkasan: reservasi hari ini, menunggu konfirmasi, total bulan ini, pendapatan bulan ini
+- Daftar reservasi dengan filter (status, tanggal, layanan, pencarian)
+- Konfirmasi / tandai selesai / batalkan (dengan alasan) reservasi
+- Tombol **WA** untuk mengirim pesan konfirmasi/pembatalan ke pelanggan (pesan sudah terisi otomatis)
+- Kelola layanan (tambah, ubah, nonaktifkan, hapus)
+- Atur jam operasional per hari, tanggal libur, jarak slot, kapasitas per slot, minimal waktu pemesanan, dan batas hari ke depan
 
-## Learning Laravel
+**Lainnya**
+- Pencegahan double booking (dicek ulang di server saat menyimpan)
+- Validasi & pesan error berbahasa Indonesia
+- Data contoh (seeder) siap demo
+- Feature test untuk alur utama
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Kebutuhan
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- PHP 8.3+ (ekstensi: pdo_sqlite atau pdo_mysql, mbstring, xml, curl)
+- Composer 2
+- Node.js 20+ dan npm
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Cara menjalankan (lokal)
 
 ```bash
-composer require laravel/boost --dev
+git clone https://github.com/anjua/demo-reservasi.git
+cd demo-reservasi
 
-php artisan boost:install
+composer install
+npm install
+
+cp .env.example .env
+php artisan key:generate
+
+# Database SQLite (paling mudah untuk demo)
+touch database/database.sqlite
+php artisan migrate --seed
+
+# Jalankan
+npm run build
+php artisan serve
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Buka:
+- Halaman pelanggan: http://localhost:8000
+- Dashboard admin: http://localhost:8000/admin
+  - Email: `admin@demo.test`
+  - Kata sandi: `password`
 
-## Contributing
+Saat mengembangkan, jalankan `npm run dev` (di terminal terpisah) agar perubahan tampilan langsung terlihat.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Untuk mengulang data contoh dari awal: `php artisan migrate:fresh --seed`.
 
-## Code of Conduct
+### Memakai MySQL
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Ubah bagian database di `.env`:
 
-## Security Vulnerabilities
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=demo_reservasi
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Lalu jalankan `php artisan migrate --seed`.
 
-## License
+## Rebrand untuk klien
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Semua identitas usaha ada di `.env` (dibaca oleh `config/brand.php`). Ganti, lalu jalankan `php artisan config:clear`:
+
+```env
+BRAND_NAME="Klinik Gigi Senyum"
+BRAND_TAGLINE="Periksa gigi tanpa antre, booking dari rumah"
+BRAND_BUSINESS_TYPE=klinik
+BRAND_LOGO=/logo.png              # taruh file di folder public/, kosongkan untuk logo inisial
+BRAND_COLOR="#0d9488"             # warna utama, semua tombol & aksen ikut berubah
+BRAND_ADDRESS="Jl. Sudirman No. 5, Yogyakarta"
+BRAND_PHONE=6281298765432         # nomor WA usaha, format 62..., tanpa + dan spasi
+BRAND_EMAIL=halo@klinik-senyum.test
+BRAND_INSTAGRAM=klinikgigisenyum
+BRAND_MAPS_URL="https://maps.app.goo.gl/xxxx"
+```
+
+Setelah itu, dari dashboard admin:
+1. **Layanan**: ganti daftar layanan sesuai klien (mis. "Scaling", "Tambal Gigi", "Servis Ringan", "Cuci Kering per kg").
+2. **Jadwal & Slot**: atur jam buka, hari libur, jarak slot, dan **kapasitas per slot** (jumlah kapster/dokter/mekanik yang bisa melayani bersamaan).
+3. Ganti akun admin: ubah email & kata sandi di `database/seeders/DatabaseSeeder.php` sebelum seeding, atau lewat `php artisan tinker`.
+
+Contoh pengaturan per jenis usaha:
+
+| Jenis usaha | Jarak slot | Kapasitas | Contoh layanan |
+|---|---|---|---|
+| Salon / barbershop | 30 menit | jumlah kapster | Potong rambut 30–60 mnt |
+| Klinik / dokter gigi | 15–30 menit | jumlah dokter | Konsultasi 15 mnt, scaling 45 mnt |
+| Bengkel | 60 menit | jumlah lift/mekanik | Servis ringan 60 mnt, ganti oli 30 mnt |
+| Laundry (antar-jemput) | 60 menit | jumlah kurir | Jemput cucian 30 mnt |
+
+## Cara kerja slot
+
+Logika ada di `app/Services/SlotService.php`:
+- Slot dibuat setiap *jarak slot* menit dari jam buka, dan layanan harus selesai sebelum jam tutup.
+- Sebuah slot tersedia jika jumlah reservasi aktif (menunggu, dikonfirmasi, selesai) yang waktunya bertumpang-tindih **kurang dari kapasitas**.
+- Reservasi yang dibatalkan otomatis membuka slotnya lagi.
+- Slot yang kurang dari *minimal waktu pemesanan* dari sekarang tidak ditampilkan.
+
+## Struktur penting
+
+```
+app/
+  Http/Controllers/BookingController.php      # halaman pelanggan
+  Http/Controllers/Admin/*                    # dashboard admin
+  Models/                                     # Service, Reservation, BusinessHour, ClosedDate, Setting
+  Services/SlotService.php                    # perhitungan slot tersedia
+config/brand.php                              # identitas usaha (rebrand)
+database/seeders/DatabaseSeeder.php           # data contoh
+lang/id/validation.php                        # pesan validasi Bahasa Indonesia
+resources/js/Pages/Booking/*                  # halaman Vue pelanggan
+resources/js/Pages/Admin/*                    # halaman Vue admin
+resources/js/lib/format.js                    # format Rupiah, tanggal, link WhatsApp
+tests/Feature/BookingTest.php                 # pengujian alur utama
+```
+
+## Menjalankan test
+
+```bash
+php artisan test
+```
+
+## Deploy singkat (shared hosting / VPS)
+
+1. Upload kode, jalankan `composer install --no-dev --optimize-autoloader` dan `npm ci && npm run build`.
+2. Atur `.env` produksi (`APP_ENV=production`, `APP_DEBUG=false`, `APP_URL`, database, dan variabel `BRAND_*`).
+3. `php artisan key:generate`, `php artisan migrate --force`, lalu buat akun admin (seeder atau tinker).
+4. `php artisan config:cache && php artisan route:cache && php artisan view:cache`.
+5. Arahkan document root web server ke folder `public/`.
+
+## Ide pengembangan untuk klien berbayar
+
+- Notifikasi WhatsApp otomatis (via WA gateway seperti Fonnte/Wablas)
+- Pilih staf/kapster tertentu
+- Pembayaran DP online (Midtrans/Xendit)
+- Pengingat H-1 otomatis
+- Laporan pendapatan per layanan/bulan dan ekspor Excel
+- Multi-cabang

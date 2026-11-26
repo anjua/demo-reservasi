@@ -24,7 +24,11 @@ class ReservationController extends Controller
                     ->orWhere('customer_phone', 'like', "%{$v}%")
                     ->orWhere('code', 'like', "%{$v}%"));
             })
-            ->orderByDesc('date')->orderBy('start_time')
+            // Yang akan datang tampil duluan (terdekat di atas), lalu riwayat (terbaru di atas)
+            ->orderByRaw('CASE WHEN date >= ? THEN 0 ELSE 1 END', [today()->toDateString()])
+            ->orderByRaw('CASE WHEN date >= ? THEN date END ASC', [today()->toDateString()])
+            ->orderByDesc('date')
+            ->orderBy('start_time')
             ->paginate(15)
             ->withQueryString();
 
