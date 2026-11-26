@@ -1,0 +1,34 @@
+<?php
+
+namespace App\Http\Middleware;
+
+use Illuminate\Http\Request;
+use Inertia\Middleware;
+
+class HandleInertiaRequests extends Middleware
+{
+    protected $rootView = 'app';
+
+    public function version(Request $request): ?string
+    {
+        return parent::version($request);
+    }
+
+    /**
+     * Data yang tersedia di semua halaman Vue (lewat usePage().props).
+     */
+    public function share(Request $request): array
+    {
+        return [
+            ...parent::share($request),
+            'brand' => config('brand'),
+            'auth' => [
+                'user' => $request->user()?->only('id', 'name', 'email'),
+            ],
+            'flash' => [
+                'success' => fn () => $request->session()->get('success'),
+                'error' => fn () => $request->session()->get('error'),
+            ],
+        ];
+    }
+}
