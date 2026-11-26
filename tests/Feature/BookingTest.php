@@ -23,6 +23,7 @@ class BookingTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $this->withoutVite(); // test tidak perlu hasil build aset frontend
 
         foreach (range(0, 6) as $day) {
             BusinessHour::create(['day_of_week' => $day, 'is_open' => true, 'open_time' => '09:00', 'close_time' => '12:00']);
