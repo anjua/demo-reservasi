@@ -17,7 +17,7 @@ use Carbon\CarbonImmutable;
  * - Tanggal harus hari buka (jam operasional) dan bukan tanggal libur.
  * - Slot dibuat tiap `slot_interval` menit, dan layanan harus selesai sebelum jam tutup.
  * - Jumlah reservasi aktif yang bertumpang-tindih dengan slot harus < `capacity_per_slot`.
- * - Slot harus minimal `min_notice_minutes` dari sekarang.
+ * - Slot yang kurang dari `min_notice_minutes` dari sekarang tidak ditampilkan.
  */
 class SlotService
 {
@@ -74,6 +74,10 @@ class SlotService
             $startStr = $start->format('H:i');
             $endStr = $end->format('H:i');
 
+            if ($start->lt($earliest)) {
+                continue; // jam sudah lewat / terlalu mepet, tidak perlu ditampilkan
+            }
+
             $overlapping = $existing->filter(
                 fn ($r) => $r->start_time < $endStr && $r->end_time > $startStr
             )->count();
@@ -82,7 +86,7 @@ class SlotService
             $slots[] = [
                 'time' => $startStr,
                 'end' => $endStr,
-                'available' => $remaining > 0 && $start->gte($earliest),
+                'available' => $remaining > 0,
                 'remaining' => $remaining,
             ];
         }
